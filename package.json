@@ -1,0 +1,15 @@
+{
+  "name": "controle-de-chamados-de-suporte-tecnico",
+  "version": "1.0.0",
+  "description": "Imagine o setor de Tecnologia da Informação (TI) de uma instituição que recebe, diariamente, diversas solicitações de suporte técnico feitas por professores, alunos e servidores administrativos. Essas solicitações podem envolver problemas com computadores, falhas na conexão com a internet, instalação de softwares ou dúvidas sobre o uso de sistemas.",
+  "scripts": {
+    "start": "parcel source/index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.16.3",
+    "typescript": "^5.9.3"
+  }
+}
