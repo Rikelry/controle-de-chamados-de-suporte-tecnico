@@ -1,0 +1,286 @@
+> source\funcionalidade\callController.ts {
+    import { Chamado } from "../modelo/chamado";
+    import { ICallRepository } from "../modelo/iCallRepository";
+    import { ICallController } from "./iCallController";
+
+    /**
+    * Controlador responsável pelas regras de negócio dos Chamados.
+    * Interage com o repositório para criar, listar e marcar chamados como atendidos.
+    */
+    export class CallController implements ICallController{
+        
+        callRepository : ICallRepository;
+
+        /**
+        * Inicializa o controlador com uma implementação de repositório.
+        * @param callRepository repositório a ser utilizado para persistência
+        */
+        constructor(callRepository : ICallRepository){
+            this.callRepository = callRepository;
+        }
+        
+        /**
+        * Abre um novo chamado com status inicial pendente.
+        * @param nome nome do solicitante
+        * @param descricao descrição do problema reportado
+        * @returns true se o repositório persistir com sucesso, caso contrário false
+        */
+        abrirChamado(nome: string, descricao: string): boolean {
+            let novoChamado : Chamado;
+            novoChamado = new Chamado(false,nome,descricao);
+            return this.callRepository.criarNovoChamado(novoChamado);
+        }
+
+        /**
+        * Lista todos os chamados presentes no repositório.
+        * @returns lista de chamados
+        */
+        listarChamado(): Array<Chamado> {
+            return this.callRepository.listarChamados();
+        }
+
+        /**
+        * Marca o chamado como atendido e solicita a atualização no repositório.
+        * @param chamado instância a ser marcada como atendida
+        * @returns true se atualizado com sucesso, false caso contrário
+        */
+        marcarComoAtendido(chamado: Chamado): boolean {
+            chamado.setStatus(true);
+            return this.callRepository.atualizarChamado(chamado);
+        }
+
+    }
+}
+
+> source\funcionalidade\iCallController.ts {
+    import { Chamado } from "../modelo/chamado";
+
+    /**
+    * Contrato para o controlador de chamados.
+    * Define operações de abertura, listagem e marcação de atendimento.
+    */
+    export interface ICallController{
+
+        /**
+        * Deve criar um novo registro de chamado no sistema. Este método retorna true se o chamado for criado com sucesso e false caso contrário.
+        * @param nome nome da pessoa que está abrindo o chamado
+        * @param descricao descrição do problema a ser resolvido
+        */
+        abrirChamado(nome:string,descricao:string):boolean;
+
+        /**
+        * Retorna todos os chamados registrados.
+        * @returns lista de chamados
+        */
+        listarChamado():Array<Chamado>;
+
+        /**
+        * Marca o chamado como atendido e atualiza o registro.
+        * @param chamado instância de chamado a ser atualizada
+        * @returns true se a operação for bem-sucedida, false caso contrário
+        */
+        marcarComoAtendido(chamado:Chamado):boolean;
+
+    }
+}
+
+> source\modelo\memoryCallRepository.ts {
+    import { Chamado } from "./chamado";
+    import { ICallRepository } from "./iCallRepository";
+
+    /**
+    * Implementação de repositório em memória para a entidade Chamado.
+    * Deve manter uma coleção interna (ex.: Array) para armazenar os registros durante a execução.
+    * Observação: Esta classe está propositalmente incompleta para ser finalizada pelos alunos.
+    */
+    export class MemoryCallRepository implements ICallRepository{
+        
+        /**
+        * Cria e armazena um novo chamado na coleção em memória.
+        * @param chamado instância a ser adicionada
+        * @returns true se adicionado com sucesso, false caso contrário
+        */
+        criarNovoChamado(chamado: Chamado): boolean {
+            throw new Error("Method not implemented.");
+        }
+        /**
+        * Atualiza um chamado existente na coleção em memória.
+        * A identificação do registro pode ser feita por referência de objeto ou por chave definida pelos alunos.
+        * @param chamado instância contendo os dados atualizados
+        * @returns true se atualizado com sucesso, false caso contrário
+        */
+        atualizarChamado(chamado: Chamado): boolean {
+            throw new Error("Method not implemented.");
+        }
+        /**
+        * Retorna todos os chamados armazenados atualmente na coleção em memória.
+        * @returns lista de chamados
+        */
+        listarChamados(): Array<Chamado> {
+            throw new Error("Method not implemented.");
+        }
+
+    }
+}
+
+> source\modelo\iCallRepository.ts {
+    import { Chamado } from "./chamado";
+
+    /**
+    * Define o contrato de persistência para a entidade Chamado.
+    * Implementações podem utilizar memória, arquivos, bancos de dados, etc.
+    */
+    export interface ICallRepository{
+        /**
+        * Persiste um novo chamado no repositório.
+        * @param chamado instância de Chamado a ser criada
+        * @returns true se criado com sucesso, false caso contrário
+        */
+        criarNovoChamado(chamado:Chamado):boolean;
+        /**
+        * Atualiza um chamado existente no repositório.
+        * @param chamado instância de Chamado já existente com os dados atualizados
+        * @returns true se atualizado com sucesso, false caso contrário
+        */
+        atualizarChamado(chamado:Chamado):boolean;
+        /**
+        * Lista todos os chamados presentes no repositório.
+        * @returns um array com todas as instâncias de Chamado
+        */
+        listarChamados():Array<Chamado>;
+    }
+}
+
+> source\modelo\chamado.ts {
+    /**
+    * Representa um chamado de suporte aberto por um solicitante.
+    * Contém o status atual (atendido ou não), o nome do solicitante e a descrição do problema.
+    */
+    export class Chamado{
+        status:boolean;
+        solicitante:string;
+        descricao:string;
+
+        /**
+        * Cria uma nova instância de Chamado.
+        * @param status estado inicial do chamado (true = atendido, false = pendente)
+        * @param solicitante nome da pessoa que abriu o chamado
+        * @param descricao descrição do problema reportado
+        */
+        constructor(status:boolean,solicitante:string,descricao:string){
+            this.status = status;
+            this.solicitante = solicitante;
+            this.descricao = descricao;
+        }
+
+        /**
+        * Atualiza o status do chamado.
+        * @param novo novo estado do chamado (true = atendido, false = pendente)
+        */
+        setStatus(novo:boolean){
+            this.status = novo;
+        }
+    }
+}
+
+> source\ui\iCallUI.ts {
+    /**
+    * Interface para componentes de interface de usuário do sistema de chamados.
+    * Implementações podem ser baseadas em terminal, web, etc.
+    */
+    export interface ICallUI{
+        /**
+        * Este método inicia a interface de usuário preparando para a interação e execução das funções do sistema por parte do usuário.
+        */
+        start():void;
+    }
+}
+
+> source\ui\TextCallUI.ts {
+    import { ICallController } from "../funcionalidade/iCallController";
+    import { ICallUI } from "./iCallUI";
+
+    /**
+    * Interface de usuário textual (prompt/alert) para interação com o sistema de chamados.
+    * Permite abrir chamados, listar e marcar como concluídos via menu simples.
+    */
+    export class TextCallUI implements ICallUI{
+        
+        callController : ICallController;
+
+        /**
+        * Inicializa a UI com um controlador de chamados.
+        * @param callController instância responsável pelas regras de negócio
+        */
+        constructor(callController:ICallController){
+            this.callController = callController;
+        }
+
+        /**
+        * Inicia o loop de interação com o usuário via prompt.
+        * Opções: 1) Cadastrar, 2) Listar, 3) Marcar como concluído, 0) Sair.
+        * Observação: As opções de listagem e marcação podem ser expandidas pelos alunos.
+        */
+        start(): void {
+            let op = 1;
+            while(op!=0){
+                op = Number(prompt('Escolha uma opção/n1- Cadastrar/n2- Listar/n3- Marcar como concluido/n0- Sair'));
+                switch(op){
+                    case 1:
+                        let nome : string = prompt('Digite seu nome')!;
+                        let descricao : string = prompt('Digite a descrição do problema')!;
+                        let deuCerto : boolean = this.callController.abrirChamado(nome,descricao);
+                        if(deuCerto){
+                            alert('Chamado cadastrado');
+                        }else{
+                            alert('Não foi possível cadastrar o chamado');
+                        }
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        alert('Opcao Inválida');
+                }
+            }
+        }
+
+    }
+
+}
+
+> source\index.html {
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Hello Parcel Iallen Gábio</h1>
+        <script type="module" src="./index.ts"></script>
+    </body>
+    </html>
+}
+
+> source\index.ts {
+    import { CallController } from "./funcionalidade/callController";
+    import { ICallController } from "./funcionalidade/iCallController";
+    import { ICallRepository } from "./modelo/iCallRepository";
+    import { MemoryCallRepository } from "./modelo/memoryCallRepository";
+    import { ICallUI } from "./ui/iCallUI";
+    import { TextCallUI } from "./ui/TextCallUI";
+
+    let callRepository : ICallRepository;
+    callRepository = new MemoryCallRepository();
+
+    let callController : ICallController;
+    callController = new CallController(callRepository);
+
+    let ui : ICallUI;
+    ui = new TextCallUI(callController);
+}
