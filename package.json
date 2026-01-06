@@ -1,15 +1,17 @@
 {
-  "name": "controle-de-chamados-de-suporte-tecnico",
+  "name": "hello-parcel",
   "version": "1.0.0",
-  "description": "Imagine o setor de Tecnologia da Informação (TI) de uma instituição que recebe, diariamente, diversas solicitações de suporte técnico feitas por professores, alunos e servidores administrativos. Essas solicitações podem envolver problemas com computadores, falhas na conexão com a internet, instalação de softwares ou dúvidas sobre o uso de sistemas.",
+  "description": "",
+  "source": "./source/index.html",
   "scripts": {
-    "start": "parcel source/index.html"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel"
   },
   "keywords": [],
-  "author": "",
+  "author": "Iallen Gábio",
   "license": "ISC",
   "devDependencies": {
-    "parcel": "^2.16.3",
+    "parcel": "^2.16.0",
     "typescript": "^5.9.3"
   }
 }

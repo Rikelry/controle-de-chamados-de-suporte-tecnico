@@ -1,43 +1,85 @@
-# Atividade em Sala – Modelagem Orientada a Objetos
+# Sistema de Chamados — Módulo 02 ADS
 
-## Cenário: Sistema de Controle de Chamados de Suporte Técnico
+## Visão Geral
+- Projeto didático para gerenciamento simples de chamados (abrir, listar, marcar como atendido).
+- Estrutura em camadas: Modelo (entidades), Funcionalidade (regras de negócio), UI (interface com usuário).
+- Objetivo: reforçar conceitos de interfaces, separação de responsabilidades e implementação incremental.
 
-Imagine o setor de Tecnologia da Informação (TI) de uma instituição que recebe, diariamente, diversas solicitações de suporte técnico feitas por professores, alunos e servidores administrativos. Essas solicitações podem envolver problemas com computadores, falhas na conexão com a internet, instalação de softwares ou dúvidas sobre o uso de sistemas.
+## Arquitetura
+- **Modelo**: entidades e contratos de persistência
+  - [Chamado](file:///Volumes/IallenSSD/workspaces/typescript/chamados/source/modelo/chamado.ts): representa um registro de suporte com `status`, `solicitante` e `descricao`.
+  - [ICallRepository](file:///Volumes/IallenSSD/workspaces/typescript/chamados/source/modelo/iCallRepository.ts): contrato de persistência para `Chamado` (criar, atualizar, listar).
+  - [MemoryCallRepository](file:///Volumes/IallenSSD/workspaces/typescript/chamados/source/modelo/memoryCallRepository.ts): repositório em memória (a ser finalizado pelos alunos).
+- **Funcionalidade**: regras de negócio
+  - [ICallController](file:///Volumes/IallenSSD/workspaces/typescript/chamados/source/funcionalidade/iCallController.ts): contrato do controlador (abrir, listar, marcar como atendido).
+  - [CallController](file:///Volumes/IallenSSD/workspaces/typescript/chamados/source/funcionalidade/callController.ts): implementação que orquestra operações com o repositório.
+- **UI**: interação com o usuário
+  - [ICallUI](file:///Volumes/IallenSSD/workspaces/typescript/chamados/source/ui/iCallUI.ts): contrato para UIs do sistema.
+  - [TextCallUI](file:///Volumes/IallenSSD/workspaces/typescript/chamados/source/ui/TextCallUI.ts): interface textual via `prompt/alert`.
+- **Bootstrap**
+  - [index.ts](file:///Volumes/IallenSSD/workspaces/typescript/chamados/source/index.ts): instancia repositório, controlador e UI.
 
-Atualmente, essas solicitações são feitas de forma informal, o que dificulta o controle do atendimento. Para melhorar essa organização, o setor de TI decidiu criar um sistema simples de controle de chamados, permitindo registrar, acompanhar e finalizar cada solicitação de forma estruturada.
+## Métodos e Contratos (Documentados no Código)
+- Repositório:
+  - `criarNovoChamado(chamado: Chamado): boolean`
+  - `atualizarChamado(chamado: Chamado): boolean`
+  - `listarChamados(): Array<Chamado>`
+- Controlador:
+  - `abrirChamado(nome: string, descricao: string): boolean`
+  - `listarChamado(): Array<Chamado>`
+  - `marcarComoAtendido(chamado: Chamado): boolean`
+- UI:
+  - `start(): void`
 
----
+Os comentários JSDoc foram adicionados diretamente nos arquivos acima, descrevendo responsabilidade, parâmetros e retorno de cada método.
 
-## Descrição Geral do Sistema
+## Atividade: Completar Implementações
+Você deve finalizar as partes propositalmente incompletas do projeto:
 
-O sistema de controle de chamados permitirá que um usuário registre um problema técnico por meio de um menu simples. Cada solicitação registrada será chamada de **Chamado**. Um chamado representa um pedido de suporte que pode estar **aberto** ou **resolvido**.
+1) MemoryCallRepository
+   - Local: [memoryCallRepository.ts](file:///Volumes/IallenSSD/workspaces/typescript/chamados/source/modelo/memoryCallRepository.ts#L1-L200)
+   - Tarefas:
+     - Criar uma coleção interna (ex.: `private chamados: Chamado[] = [];`).
+     - Implementar `criarNovoChamado(chamado)`: adicionar à coleção e retornar `true` em caso de sucesso.
+     - Implementar `atualizarChamado(chamado)`: atualizar o registro correspondente. Pode usar:
+       - Referência de objeto (mesma instância) ou
+       - Critério de identificação simples (ex.: índice, combinação `solicitante + descricao`).
+       - Retornar `true` se encontrado e atualizado, `false` caso contrário.
+     - Implementar `listarChamados()`: retornar uma cópia da coleção ou a própria referência (para fins didáticos).
 
-O sistema não utilizará banco de dados nem interface gráfica avançada. Todas as interações ocorrerão por meio de mensagens de texto, utilizando as funções `prompt()` para entrada de dados e `alert()` para exibição de informações.
+2) TextCallUI — opções 2 e 3
+   - Local: [TextCallUI.ts](file:///Volumes/IallenSSD/workspaces/typescript/chamados/source/ui/TextCallUI.ts#L1-L200)
+   - Tarefas:
+     - Implementar o case `2` (Listar): chamar `callController.listarChamado()` e exibir os chamados (`alert` ou `console.log`).
+     - Implementar o case `3` (Marcar como concluído):
+       - Solicitar identificação do chamado (ex.: índice da lista).
+       - Recuperar o chamado da coleção e chamar `callController.marcarComoAtendido(chamado)`.
+       - Exibir mensagem de sucesso/erro conforme o retorno.
 
----
+## Critérios de Aceite
+- MemoryCallRepository:
+  - Mantém estado em memória durante a execução.
+  - `criarNovoChamado` e `listarChamados` funcionam corretamente.
+  - `atualizarChamado` marca o registro como atendido quando chamado via controlador.
+- TextCallUI:
+  - Menu lista corretamente os chamados.
+  - Usuário consegue marcar um chamado como concluído e recebe feedback.
 
-## Funcionalidades do Sistema
+## Como Executar
+- Pré-requisitos:
+  - Node.js (>= 18)
+- Execução (exemplos):
+  - `npm i`
+  - `npm start`
 
-- **Abrir um chamado**: o usuário informa seu nome e descreve o problema encontrado.
-- **Listar chamados**: o sistema exibe todos os chamados cadastrados, mostrando o solicitante, a descrição do problema e o status do atendimento.
-- **Atender (ou fechar) chamado**: o usuário seleciona um chamado e o marca como resolvido.
-- **Encerrar o sistema**: finaliza a execução do programa.
+Observação: Adapte os comandos conforme seu ambiente e configuração do `tsconfig.json`.
 
----
+## Dicas de Implementação
+- Mantenha nomes claros e tipagem explícita.
+- Evite efeitos colaterais desnecessários ao atualizar elementos da coleção.
+- Trate entradas de usuário com cuidado na UI (conversão de `prompt` para número, validação de índices).
 
-## Exemplos de Interação com o Usuário
-
-### Exemplo 1 – Abertura de chamado
-Ao iniciar o sistema, o usuário escolhe a opção de abrir um chamado. O sistema solicita o nome do solicitante e, em seguida, pede a descrição do problema. Após o cadastro, uma mensagem informa que o chamado foi registrado com sucesso.
-
-### Exemplo 2 – Listagem de chamados
-Ao escolher a opção de listagem, o sistema exibe todos os chamados já registrados, mostrando quais ainda estão abertos e quais já foram resolvidos.
-
-### Exemplo 3 – Atendimento de chamado
-O usuário seleciona um chamado específico e indica que o problema foi resolvido. O sistema atualiza o status do chamado e informa que ele foi encerrado.
-
----
-
-## Objetivo da Atividade
-
-Com base nesse cenário, os alunos irão modelar o sistema utilizando os conceitos de **Programação Orientada a Objetos**, organizando o código em camadas (**UI**, **Funcionalidades** e **Modelo**). O foco principal da atividade é a identificação das classes, definição de responsabilidades e uso de abstrações, como **interfaces**, para representar as regras de negócio do sistema.
+## Extensões Opcionais
+- Adicionar um identificador único ao `Chamado` (ex.: `id: number`).
++- Separar a formatação de saída (UI) da lógica de listagem, criando uma função de renderização.
++- Persistir em arquivo ou base de dados em uma implementação futura de `ICallRepository`.
